@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field
 from typing import Optional, List
-from models.anime_season import Node, MainPicture, Genre, MyListStatus, StartSeason, Studio
+from models.mal_anime_season_response import Node, MainPicture, Genre, MyListStatus, StartSeason, Studio
 
 @dataclass
-class MyAnimeInfo:
+class ComputedAnime:
     id: int
     title: str
     main_picture: Optional[MainPicture] = None
@@ -56,3 +56,8 @@ class MyAnimeInfo:
             studios=node.studios,
             english_title=english_title
         )
+
+@dataclass
+class AnimeProvider:
+    name: str
+    id: int
