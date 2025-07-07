@@ -4,13 +4,25 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
             "name": "Python Debugger: main.py",
             "type": "debugpy",
             "request": "launch",
             "program": "main.py",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Flask: website/app.py",
+            "type": "python",
+            "request": "launch",
+            "module": "website.app",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "FLASK_APP": "website/app.py",
+                "FLASK_ENV": "development"
+            },
+            "args": []
         }
     ]
 }

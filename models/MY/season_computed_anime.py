@@ -8,7 +8,7 @@ from models.MAL.response.season.start_season import StartSeason
 from models.MAL.response.season.studio import Studio
 
 @dataclass
-class ComputedAnime:
+class SeasonComputedAnime:
     id: int
     title: str
     main_picture: Optional[MainPicture] = None

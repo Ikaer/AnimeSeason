@@ -16,8 +16,8 @@ import configparser
 import csv
 import os
 import urllib.parse
-from mal_auth import MALAuth
-from mal_api import fetch_seasonal_anime
+from animecore.mal_auth import MALAuth
+from animecore.mal_api import fetch_seasonal_anime
 from models.anime_season import AnimeSeasonResponse, AnimeData, Node
 import json
 
