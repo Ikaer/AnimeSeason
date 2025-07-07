@@ -18,6 +18,8 @@ import os
 import urllib.parse
 from mal_auth import MALAuth
 from mal_api import fetch_seasonal_anime
+from models.anime_season import AnimeSeasonResponse, AnimeData, Node
+import json
 
 # === CONFIGURATION ===
 config = configparser.ConfigParser()
@@ -30,21 +32,35 @@ TOKEN_URL = 'https://myanimelist.net/v1/oauth2/token'
 
 os.makedirs(DB_FOLDER, exist_ok=True)
 
+# === PARSE JSON TO DATACLASSES ===
+def parse_anime_season_response(json_path):
+    with open(json_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    # Helper to recursively convert dicts to dataclasses
+    def from_dict(cls, d):
+        if isinstance(d, list):
+            return [from_dict(cls.__args__[0], i) for i in d]
+        if not isinstance(d, dict):
+            return d
+        fieldtypes = {f.name: f.type for f in cls.__dataclass_fields__.values()}
+        return cls(**{k: from_dict(fieldtypes[k], v) for k, v in d.items() if k in fieldtypes})
+    return from_dict(AnimeSeasonResponse, data)
+
 # === SAVE TO CSV ===
-def save_to_csv(anime_list, filename):
-    """Save anime data to a CSV file."""
+def save_to_csv(anime_data_list, filename):
+    """Save anime data (as dataclasses) to a CSV file."""
     with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["id", "title", "media_type", "start_date"])
-        for anime in anime_list:
-            node = anime['node']
+        for anime_data in anime_data_list:
+            node = anime_data.node
             writer.writerow([
-                node.get('id'),
-                node.get('title'),
-                node.get('media_type'),
-                node.get('start_date'),
+                node.id,
+                node.title,
+                node.media_type,
+                node.start_date,
             ])
-    print(f"Saved {len(anime_list)} anime to {filename}")
+    print(f"Saved {len(anime_data_list)} anime to {filename}")
 
 # === MAIN ===
 if __name__ == "__main__":
@@ -59,13 +75,11 @@ if __name__ == "__main__":
         "nsfw,genres,media_type,status,my_list_status,num_episodes,start_season,broadcast,source,average_episode_duration,rating,pictures,"
         "background,related_anime,studios"
     )
-    anime_data = fetch_seasonal_anime(token, year, season, limit=100, fields=fields, sort="anime_score")
-    anime_list = anime_data['data']
+    anime_season = fetch_seasonal_anime(token, year, season, limit=100, fields=fields, sort="anime_score")
     # 3. Save JSON response
     json_path = os.path.join(DB_FOLDER, f"anime_{year}_{season}.json")
     with open(json_path, 'w', encoding='utf-8') as f:
-        import json
-        json.dump(anime_data, f, ensure_ascii=False, indent=2)
+        json.dump(json.loads(json.dumps(anime_season, default=lambda o: o.__dict__)), f, ensure_ascii=False, indent=2)
     # 4. Save to CSV in configured directory
     csv_path = os.path.join(DB_FOLDER, f"anime_{year}_{season}.csv")
-    save_to_csv(anime_list, csv_path)
+    save_to_csv(anime_season.data, csv_path)

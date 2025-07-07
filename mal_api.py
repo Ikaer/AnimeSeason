@@ -1,19 +1,24 @@
 import requests
+from models.anime_season import AnimeSeasonResponse
+import json
+import dataclasses
+
+def parse_anime_season_response(data):
+    # Helper to recursively convert dicts to dataclasses
+    def from_dict(cls, d):
+        if isinstance(d, list):
+            return [from_dict(cls.__args__[0], i) for i in d]
+        if not isinstance(d, dict):
+            return d
+        if not dataclasses.is_dataclass(cls):
+            return d
+        fieldtypes = {f.name: f.type for f in cls.__dataclass_fields__.values()}
+        return cls(**{k: from_dict(fieldtypes[k], v) for k, v in d.items() if k in fieldtypes})
+    return from_dict(AnimeSeasonResponse, data)
 
 def fetch_seasonal_anime(token, year, season, limit=100, offset=0, sort=None, fields=None, nsfw=None):
     """
-    Fetch seasonal anime from MAL API using OAuth2 token.
-    Parameters:
-        token (str): OAuth2 access token
-        year (int): Year of the season
-        season (str): 'winter', 'spring', 'summer', 'fall'
-        limit (int): Number of results (max 500)
-        offset (int): Offset for pagination
-        sort (str): Sorting order (if supported)
-        fields (str): Comma-separated list of fields to include
-        nsfw (bool): Include NSFW content (True/False)
-    Returns:
-        dict: API response JSON
+    Fetch seasonal anime from MAL API using OAuth2 token and return as dataclasses.
     """
     url = f"https://api.myanimelist.net/v2/anime/season/{year}/{season}"
     params = {"limit": limit, "offset": offset}
@@ -26,4 +31,5 @@ def fetch_seasonal_anime(token, year, season, limit=100, offset=0, sort=None, fi
     headers = {"Authorization": f"Bearer {token}"}
     resp = requests.get(url, headers=headers, params=params)
     resp.raise_for_status()
-    return resp.json()
+    data = resp.json()
+    return parse_anime_season_response(data)
