@@ -81,5 +81,5 @@ if __name__ == "__main__":
     with open(json_path, 'w', encoding='utf-8') as f:
         json.dump(json.loads(json.dumps(anime_season, default=lambda o: o.__dict__)), f, ensure_ascii=False, indent=2)
     # 4. Save to CSV in configured directory
-    csv_path = os.path.join(DB_FOLDER, f"anime_{year}_{season}.csv")
-    save_to_csv(anime_season.data, csv_path)
+    # csv_path = os.path.join(DB_FOLDER, f"anime_{year}_{season}.csv")
+    # save_to_csv(anime_season.data, csv_path)
