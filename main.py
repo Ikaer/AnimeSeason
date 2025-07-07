@@ -16,9 +16,9 @@ import configparser
 import csv
 import os
 import urllib.parse
-from animecore.mal_auth import MALAuth
-from animecore.mal_api import fetch_seasonal_anime
-from models.anime_season import AnimeSeasonResponse, AnimeData, Node
+from mal.mal_auth import MALAuth
+from mal.mal_api import fetch_seasonal_anime
+from models.MAL.response.season import AnimeSeasonResponse, AnimeData, Node
 import json
 
 # === CONFIGURATION ===
@@ -31,36 +31,6 @@ AUTH_URL = 'https://myanimelist.net/v1/oauth2/authorize'
 TOKEN_URL = 'https://myanimelist.net/v1/oauth2/token'
 
 os.makedirs(DB_FOLDER, exist_ok=True)
-
-# === PARSE JSON TO DATACLASSES ===
-def parse_anime_season_response(json_path):
-    with open(json_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    # Helper to recursively convert dicts to dataclasses
-    def from_dict(cls, d):
-        if isinstance(d, list):
-            return [from_dict(cls.__args__[0], i) for i in d]
-        if not isinstance(d, dict):
-            return d
-        fieldtypes = {f.name: f.type for f in cls.__dataclass_fields__.values()}
-        return cls(**{k: from_dict(fieldtypes[k], v) for k, v in d.items() if k in fieldtypes})
-    return from_dict(AnimeSeasonResponse, data)
-
-# === SAVE TO CSV ===
-def save_to_csv(anime_data_list, filename):
-    """Save anime data (as dataclasses) to a CSV file."""
-    with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(["id", "title", "media_type", "start_date"])
-        for anime_data in anime_data_list:
-            node = anime_data.node
-            writer.writerow([
-                node.id,
-                node.title,
-                node.media_type,
-                node.start_date,
-            ])
-    print(f"Saved {len(anime_data_list)} anime to {filename}")
 
 # === MAIN ===
 if __name__ == "__main__":

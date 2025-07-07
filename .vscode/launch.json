@@ -12,14 +12,14 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Flask: website/app.py",
-            "type": "python",
+            "name": "Flask: app.py",
+            "type": "debugpy",
             "request": "launch",
-            "module": "website.app",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
+            "program": "app.py",
             "env": {
-                "FLASK_APP": "website/app.py",
+                "FLASK_APP": "app.py",
                 "FLASK_ENV": "development"
             },
             "args": []

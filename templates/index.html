@@ -30,13 +30,13 @@
     </form>
     <div class="actions">
         {% if has_file %}
-            <form method="post" action="/fetch" style="display:inline;">
+            <form method="post" action="/mal/fetch" style="display:inline;">
                 <input type="hidden" name="year" value="{{selected_year}}">
                 <input type="hidden" name="season" value="{{selected_season}}">
                 <button type="submit">Refresh MAL List</button>
             </form>
         {% else %}
-            <form method="post" action="/fetch" style="display:inline;">
+            <form method="post" action="/mal/fetch" style="display:inline;">
                 <input type="hidden" name="year" value="{{selected_year}}">
                 <input type="hidden" name="season" value="{{selected_season}}">
                 <button type="submit">Fetch MAL List</button>
