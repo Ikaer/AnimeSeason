@@ -1,0 +1,3 @@
+# Requirements for AnimeSeason project
+requests
+requests-oauthlib

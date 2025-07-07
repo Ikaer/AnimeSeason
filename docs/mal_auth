@@ -1,0 +1,170 @@
+MyAnimeList authorization
+Table of contents
+Overview
+Under development
+Client registration
+Obtaining OAuth 2.0 access tokens
+Step 1: Generate a code verifier and challenge
+Step 2: Client requests OAuth 2.0 authentication
+Step 3: MyAnimeList authenticates user
+Step 4: User authorizes the client on MyAnimeList
+Step 5: MyAnimeList redirects back to the client
+Step 6: Exchange authorization code for refresh and access tokens
+Scheme 1: The HTTP Basic authentication
+Scheme 2: Including the client credentials in the request-body
+Parameter description of access token requests
+Response to token requests
+Refreshing an access token
+Parameter description of refresh token requests
+Call MyAnimeList API
+Overview
+OAuth2.0 is supported.
+
+Currently supported grant:
+
+Authorization Code Grant
+with PKCE
+Description
+Access Token lifetime	One hour.
+Access Token data length	Normally this value is around 1,000 bytes long.
+Refresh Token lifetime	One month.
+Refresh Token data length	Normally this value is around 1,000 bytes long.
+client_id data length	32 bytes.
+client_secret data length	64 bytes.
+Client registration
+First you need to register your application in MAL’s system and get a client_id and a client secret.
+Please register from this form.
+
+Obtaining OAuth 2.0 access tokens
+Step 1: Generate a code verifier and challenge
+MyAnimeList supports PKCE to prevent authorization code interception attacks, mainly native apps.
+In accordance with the procedures in Section 4.1 and Section 4.2, generate code_verifier and code_challenge.
+A unique code verifier must be generated for every authorization request.
+
+NOTE: Currently, only the plain method is supported.
+
+Step 2: Client requests OAuth 2.0 authentication
+GET https://myanimelist.net/v1/oauth2/authorize?
+response_type=code
+&client_id=YOUR_CLIENT_ID
+&state=YOUR_STATE
+&redirect_uri=YOUR_REDIRECT_URI
+&code_challenge=YOUR_PKCE_CODE_CHALLENGE
+&code_challenge_method=plain 
+HTTP/1.1
+Host: YOUR_HOST_URL
+Parameter	Description
+response_type	REQUIRED. Value MUST be set to “code”.
+client_id	REQUIRED.
+state	RECOMMENDED. OAuth 2.0 state
+redirect_uri	OPTIONAL. If you registered only one redirection URI in advance, you can omit this parameter. If you set this, the value must exactly match one of your pre-registered URIs.
+code_challenge	REQUIRED. A minimum length of 43 characters and a maximum length of 128 characters. See the details for the PKCE code_challenge.
+code_challenge_method	OPTIONAL. Defaults to plain if not present in the request. Currently, only the plain method is supported.
+Step 3: MyAnimeList authenticates user
+MyAnimeList authenticates the user.
+
+Step 4: User authorizes the client on MyAnimeList
+The user authorizes the client on MyAnimeList.
+
+Step 5: MyAnimeList redirects back to the client
+MyAnimeList authorization server redirects back to YOUR_REDIRECT_URI.
+
+HTTP/1.1 302 Found
+Location: YOUR_REDIRECT_URI?code=AUTHORIZATION_CODE
+&state=YOUR_STATE
+Parameter	Description
+code	The authorization code returned from the initial request. Normally, this value is nearly 1,000 bytes long.
+state	The state value you send the request with.
+The client should verify the state.
+
+Step 6: Exchange authorization code for refresh and access tokens
+In this step, you exchange the client authorization code you get in the previous step for refresh and access tokens. Also, your clients are authenticated by the authorization server. MyAnimeList supports two schemes to authenticate clients. The form of access token request varies depending on which scheme you use.
+
+Scheme 1: the HTTP Basic authentication
+MyAnimeList supports the HTTP Basic authentication scheme as defined in RFC2617 to authenticate with the authorization server.
+client_id is used as the username; client_secret is used as the password.
+(If your client doesn’t have a client secret, client_secret will be an empty.)
+
+POST https://myanimelist.net/v1/oauth2/token HTTP/1.1
+Host: server.example.com
+Authorization: Basic exampleEXAMPLEeXaMpLeExAmPlE
+Content-Type: application/x-www-form-urlencoded
+
+client_id=YOUR_CLIENT_ID
+&grant_type=authorization_code
+&code=AUTHORIZATION_CODE
+&redirect_uri=YOUR_REDIRECT_URI
+&code_verifier=YOUR_PKCE_CODE_VERIFIER
+Scheme 2: including the client credentials in the request-body
+Also, MyAnimeList supports the authentication scheme which includes the client credentials in the request-body.
+In this case, the access token request has the following form:
+
+POST https://myanimelist.net/v1/oauth2/token HTTP/1.1
+Host: server.example.com
+Content-Type: application/x-www-form-urlencoded
+
+client_id=YOUR_CLIENT_ID
+&client_secret=YOUR_CLIENT_SECRET
+&grant_type=authorization_code
+&code=AUTHORIZATION_CODE
+&redirect_uri=YOUR_REDIRECT_URI
+&code_verifier=YOUR_PKCE_CODE_VERIFIER
+Parameter description of access token requests
+Parameter	Description
+client_id	OPTIONAL in Scheme 1; REQUIRED in Scheme 2.
+client_secret	MUST NOT BE INCLUDED in Scheme 1; REQUIRED, if your client has client secret in Scheme 2.
+grant_type	REQUIRED. Value MUST be set to “authorization_code”.
+code	REQUIRED. The authorization code you got in the previous step.
+redirect_uri	OPTIONAL. The value of this parameter must be identical to one that is included the previous authorization request. You can omit this parameter only when you registered only one redirection URI in advance and you didn’t add the redirect_uri parameter to the authorization request you sent in the previous step.
+code_verifier	REQUIRED. A minimum length of 43 characters and a maximum length of 128 characters. See the detail of PKCE code_challenge.
+Response to token requests
+
+{
+  "token_type": "Bearer",
+  "expires_in": 2415600,
+  "access_token": "ACCESS_TOKEN",
+  "refresh_token": "REFRESH_TOKEN"
+}
+Refreshing an access token
+When you use an access token that is expired, you receive the following response:
+
+HTTP/1.1 401 Unauthorized
+WWW-Authenticate: Bearer error="invalid_token",error_description="The access token expired"
+
+{
+"error": "invalid_token"
+}
+In this case, you can get a new access token by using a refresh token.
+
+This is an example of the refresh token request:
+
+POST https://myanimelist.net/v1/oauth2/token HTTP/1.1
+Host: server.example.com
+Authorization: Basic exampleEXAMPLEeXaMpLeExAmPlE
+Content-Type: application/x-www-form-urlencoded
+
+&grant_type=refresh_token
+&refresh_token=YOUR_REFRESH_TOKEN
+Client authentication is required in this request. How to authenticate your client is completely the same as in the above Step 6.
+(The request example written above is the one that uses Scheme 1. )
+
+If the request is valid, you will receive a response that is completely the same as the one described above.
+The expiration date of the new token you receive is one month from when you receive it.
+
+Parameter description of refresh token requests
+Parameter	Description
+grant_type	REQUIRED. Value MUST be set to “refresh_token”.
+refresh_token	REQUIRED. A refresh token you’ve already obtained.
+You can still use an old refresh token after obtaining a new one until it expires. However, it’s highly recommended that you discard the old one once you successfully obtain the new one.
+
+You can refresh an access token anytime, but once a new one is issued, the old one is revoked automatically.
+
+Call MyAnimeList API
+Example:
+
+curl 'https://api.myanimelist.net/v0.20/anime/17074/my_list_status' \
+-X PUT \
+-d status=completed \
+-d score=8 \
+-d num_watched_episodes=3 \
+-H 'Authorization: Bearer ACCESS_TOKEN'
