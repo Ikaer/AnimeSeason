@@ -17,26 +17,18 @@ import csv
 import os
 import urllib.parse
 from mal_auth import MALAuth
+from mal_api import fetch_seasonal_anime
 
 # === CONFIGURATION ===
 config = configparser.ConfigParser()
 config.read('config.ini')
-CSV_DIR = config['Paths']['anime_db_path']
+DB_FOLDER = config['Paths']['anime_db_path']
 CLIENT_ID = config['ApiKey']['mal']
 REDIRECT_URI = config['ApiKey'].get('redirect_uri', None)  # Optional, can be omitted
 AUTH_URL = 'https://myanimelist.net/v1/oauth2/authorize'
 TOKEN_URL = 'https://myanimelist.net/v1/oauth2/token'
 
-os.makedirs(CSV_DIR, exist_ok=True)
-
-# === FETCH SEASONAL ANIME ===
-def fetch_seasonal_anime(token, year, season, limit=100):
-    """Fetch seasonal anime from MAL API using OAuth2 token."""
-    url = f"https://api.myanimelist.net/v2/anime/season/{year}/{season}?limit={limit}"
-    headers = {"Authorization": f"Bearer {token}"}
-    resp = requests.get(url, headers=headers)
-    resp.raise_for_status()
-    return resp.json()['data']
+os.makedirs(DB_FOLDER, exist_ok=True)
 
 # === SAVE TO CSV ===
 def save_to_csv(anime_list, filename):
@@ -62,7 +54,18 @@ if __name__ == "__main__":
     # 2. Fetch anime for current season (example: 2025, summer)
     year = 2025
     season = 'summer'  # spring, summer, fall, winter
-    anime_list = fetch_seasonal_anime(token, year, season)
-    # 3. Save to CSV in configured directory
-    csv_path = os.path.join(CSV_DIR, f"anime_{year}_{season}.csv")
+    fields = (
+        "id,title,main_picture,alternative_titles,start_date,end_date,synopsis,mean,rank,popularity,num_list_users,num_scoring_users,"
+        "nsfw,genres,media_type,status,my_list_status,num_episodes,start_season,broadcast,source,average_episode_duration,rating,pictures,"
+        "background,related_anime,studios"
+    )
+    anime_data = fetch_seasonal_anime(token, year, season, limit=100, fields=fields, sort="anime_score")
+    anime_list = anime_data['data']
+    # 3. Save JSON response
+    json_path = os.path.join(DB_FOLDER, f"anime_{year}_{season}.json")
+    with open(json_path, 'w', encoding='utf-8') as f:
+        import json
+        json.dump(anime_data, f, ensure_ascii=False, indent=2)
+    # 4. Save to CSV in configured directory
+    csv_path = os.path.join(DB_FOLDER, f"anime_{year}_{season}.csv")
     save_to_csv(anime_list, csv_path)
