@@ -1,5 +1,5 @@
 import requests
-from models.mal_anime_season_response import AnimeSeasonResponse
+from models.MAL.response.season.anime_season_response import AnimeSeasonResponse
 import json
 import dataclasses
 

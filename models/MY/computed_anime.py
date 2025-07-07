@@ -1,6 +1,11 @@
 from dataclasses import dataclass, field
 from typing import Optional, List
-from models.mal_anime_season_response import Node, MainPicture, Genre, MyListStatus, StartSeason, Studio
+from models.MAL.response.season.node import Node
+from models.MAL.response.season.main_picture import MainPicture
+from models.MAL.response.season.genre import Genre
+from models.MAL.response.season.my_list_status import MyListStatus
+from models.MAL.response.season.start_season import StartSeason
+from models.MAL.response.season.studio import Studio
 
 @dataclass
 class ComputedAnime:
@@ -56,8 +61,3 @@ class ComputedAnime:
             studios=node.studios,
             english_title=english_title
         )
-
-@dataclass
-class AnimeProvider:
-    name: str
-    id: int
