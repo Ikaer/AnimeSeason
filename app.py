@@ -11,6 +11,8 @@ from datetime import datetime
 import dataclasses
 import requests
 
+from add_provider_url_route import provider_bp
+
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -31,6 +33,9 @@ app.secret_key = secrets.token_hex(32)
 SEASONS = ['winter', 'spring', 'summer', 'fall']
 
 CONSOLIDATED_FILE = os.path.join(DB_FOLDER, "anime_seasons_mal.json")
+
+# Register the provider blueprint
+app.register_blueprint(provider_bp)
 
 # Helper to load the consolidated anime dict
 def load_consolidated_anime():
@@ -58,10 +63,30 @@ def upsert_anime_season(anime_season):
 # Helper to get anime list for a year/season from consolidated file
 def get_anime_list_from_consolidated(year, season):
     anime_dict = load_consolidated_anime()
+    # Load provider info
+    providers_path = os.path.join(DB_FOLDER, 'provider.json')
+    anime_providers_path = os.path.join(DB_FOLDER, 'anime_providers.json')
+    with open(providers_path, 'r', encoding='utf-8') as f:
+        providers = {str(p['id']): p for p in json.load(f)}
+    if os.path.exists(anime_providers_path):
+        with open(anime_providers_path, 'r', encoding='utf-8') as f:
+            anime_providers = json.load(f)
+    else:
+        anime_providers = {}
     result = []
     for anime in anime_dict.values():
         start_season = anime.get('start_season', {})
         if start_season.get('year') == year and start_season.get('season') == season:
+            anime_id = str(anime['id'])
+            # Attach provider info if available
+            provider_entries = []
+            for entry in anime_providers.get(anime_id, []):
+                provider = providers.get(str(entry['provider_id']))
+                if provider:
+                    provider_entry = provider.copy()
+                    provider_entry['url'] = entry['url']
+                    provider_entries.append(provider_entry)
+            anime['providers'] = provider_entries
             result.append(anime)
     return result
 

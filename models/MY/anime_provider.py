@@ -4,3 +4,5 @@ from dataclasses import dataclass
 class AnimeProvider:
     name: str
     id: int
+    logo: str
+    url: str

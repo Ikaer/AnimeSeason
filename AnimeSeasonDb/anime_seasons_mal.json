@@ -1202,8 +1202,8 @@
     "mean": 7.46,
     "rank": 2153,
     "popularity": 5036,
-    "num_list_users": 22242,
-    "num_scoring_users": 1664,
+    "num_list_users": 22230,
+    "num_scoring_users": 1663,
     "nsfw": "white",
     "genres": [
       {
@@ -2309,8 +2309,8 @@
     "mean": 8.6,
     "rank": 102,
     "popularity": 2681,
-    "num_list_users": 77282,
-    "num_scoring_users": 9784,
+    "num_list_users": 77222,
+    "num_scoring_users": 9771,
     "nsfw": "white",
     "genres": [
       {
@@ -2455,7 +2455,7 @@
     "mean": 6.75,
     "rank": 5707,
     "popularity": 7123,
-    "num_list_users": 9325,
+    "num_list_users": 9318,
     "num_scoring_users": 638,
     "nsfw": "white",
     "genres": [
@@ -3771,11 +3771,11 @@
     "start_date": "2025-07-08",
     "end_date": null,
     "synopsis": "Second season of Kakkou no Iinazuke.",
-    "mean": 7.11,
+    "mean": 7.09,
     "rank": 4032,
     "popularity": 3939,
-    "num_list_users": 38436,
-    "num_scoring_users": 838,
+    "num_list_users": 38382,
+    "num_scoring_users": 814,
     "nsfw": "white",
     "genres": [
       {
@@ -3911,11 +3911,11 @@
     "start_date": "2025-07-04",
     "end_date": null,
     "synopsis": "Despite what the meaning of her name would suggest, Hana Tabata bears no resemblance to a flower. Her eyes are too small and her limbs are far from slender. She is, in fact, \"ugly,\" and as such, knows that cute things and a fairy-tale romance are out of her reach. Yet this does not stop her from daydreaming every morning as she tends to the school's beautiful flower beds that contrast her appearance.\n\nOne day, a casual encounter puts Tabata in contact with her classmate, Yousuke Ueno, who is well known for being both handsome and extremely kind. Why would such a popular student associate with a background character like her? To Tabata, it is an unfathomable situation, but can Ueno show her that looks aren't everything?\n\n[Written by MAL Rewrite]",
-    "mean": 6.77,
+    "mean": 6.76,
     "rank": 5674,
     "popularity": 5211,
-    "num_list_users": 20463,
-    "num_scoring_users": 997,
+    "num_list_users": 20456,
+    "num_scoring_users": 996,
     "nsfw": "white",
     "genres": [
       {
@@ -4117,8 +4117,8 @@
     "mean": 6.63,
     "rank": 6453,
     "popularity": 4493,
-    "num_list_users": 29223,
-    "num_scoring_users": 2223,
+    "num_list_users": 29205,
+    "num_scoring_users": 2218,
     "nsfw": "white",
     "genres": [
       {
@@ -4481,7 +4481,7 @@
     },
     "start_date": "2025-07-02",
     "end_date": null,
-    "synopsis": "A number of inexplicable phenomena have been plaguing the town of Domori. In order to protect the town's children, a new homeroom teacher known as \"Nube\" arrives.\n\nNormally gentle and a bit outgoing, Nube has a secret side: he is, in fact, the only psychic teacher in Japan. Rumor also has it his left hand is possessed by a demon! Hell's messenger of justice is here to take on the school's seven mysteries, ghosts, and evil spirits attacking his students. This occultist action story starts now!\n\n(Source: Official Website)",
+    "synopsis": "A number of inexplicable phenomena have been plaguing the town of Domori. In order to protect the town's children, a new homeroom teacher known as \"Nube\" arrives.\n\nNormally gentle and a bit outgoing, Nube has a secret side: he is, in fact, the only psychic teacher in Japan. Rumor also has it his left hand is possessed by a demon!Hell's messenger of justice is here to take on the school's seven mysteries, ghosts, and evil spirits attacking his students. This occultist action story starts now!\n\n(Source: Official Website)",
     "mean": 6.83,
     "rank": 5278,
     "popularity": 5667,
@@ -4559,8 +4559,8 @@
     "mean": 7.02,
     "rank": 4364,
     "popularity": 5567,
-    "num_list_users": 17329,
-    "num_scoring_users": 1233,
+    "num_list_users": 17325,
+    "num_scoring_users": 1232,
     "nsfw": "white",
     "genres": [
       {
@@ -4685,8 +4685,8 @@
     "id": 56420,
     "title": "Haigakura",
     "main_picture": {
-      "medium": "https://cdn.myanimelist.net/images/anime/1214/142185.webp",
-      "large": "https://cdn.myanimelist.net/images/anime/1214/142185l.webp"
+      "medium": "https://cdn.myanimelist.net/images/anime/1214/142185.jpg",
+      "large": "https://cdn.myanimelist.net/images/anime/1214/142185l.jpg"
     },
     "alternative_titles": {
       "synonyms": [],

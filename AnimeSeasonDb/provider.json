@@ -1,7 +1,7 @@
 [
-  {"id": 1, "name": "Netflix"},
-  {"id": 2, "name": "Crunchyroll"},
-  {"id": 3, "name": "ADN"},
-  {"id": 4, "name": "Disney"},
-  {"id": 5, "name": "Prime"}
+  {"id": 1, "name": "Netflix", "logo":"netflix.png", "url": "https://www.netflix.com" },
+  {"id": 2, "name": "Crunchyroll", "logo": "crunchyroll.svg", "url": "https://www.crunchyroll.com" },
+  {"id": 3, "name": "ADN", "logo":"adn.png", "url": "https://animationdigitalnetwork.com" },
+  {"id": 4, "name": "Disney", "logo": "disney.png", "url": "https://www.disneyplus.com" },
+  {"id": 5, "name": "Prime", "logo": "prime.png", "url":"https://www.primevideo.com" }
 ]
