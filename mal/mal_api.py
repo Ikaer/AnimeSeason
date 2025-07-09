@@ -3,6 +3,9 @@ from models.MAL.response.season.anime_season_response import AnimeSeasonResponse
 import json
 import dataclasses
 
+class MalUnauthorizedException(Exception):
+    pass
+
 def parse_anime_season_response(data):
     # Helper to recursively convert dicts to dataclasses
     def from_dict(cls, d):
@@ -28,8 +31,10 @@ def fetch_seasonal_anime(token, year, season, limit=100, offset=0, sort=None, fi
         params["fields"] = fields
     if nsfw is not None:
         params["nsfw"] = str(nsfw).lower()
-    headers = {"Authorization": f"Bearer {token}"}
+    headers = {"Authorization": f"Bearer {token['access_token'] if isinstance(token, dict) else token}"}
     resp = requests.get(url, headers=headers, params=params)
+    if resp.status_code == 401:
+        raise MalUnauthorizedException("Unauthorized: Invalid or expired MAL token.")
     resp.raise_for_status()
     data = resp.json()
     return parse_anime_season_response(data)

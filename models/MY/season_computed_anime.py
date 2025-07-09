@@ -6,6 +6,7 @@ from models.MAL.response.season.genre import Genre
 from models.MAL.response.season.my_list_status import MyListStatus
 from models.MAL.response.season.start_season import StartSeason
 from models.MAL.response.season.studio import Studio
+from models.MY.season_anime_provider_url import SeasonAnimeProviderUrl
 
 @dataclass
 class SeasonComputedAnime:
@@ -32,11 +33,16 @@ class SeasonComputedAnime:
     studios: List[Studio] = field(default_factory=list)
     english_title: Optional[str] = None
 
+    providers: List[SeasonAnimeProviderUrl] = None
+
     @classmethod
-    def from_node(cls, node: Node):
+    def from_node(cls, node: Node, providers: Optional[List[SeasonAnimeProviderUrl]] = None) -> 'SeasonComputedAnime':
+        
         english_title = None
+
         if node.alternative_titles and node.alternative_titles.en:
             english_title = node.alternative_titles.en
+
         return cls(
             id=node.id,
             title=node.title,
@@ -59,5 +65,6 @@ class SeasonComputedAnime:
             source=node.source,
             rating=node.rating,
             studios=node.studios,
-            english_title=english_title
+            english_title=english_title,
+            providers=providers or []
         )

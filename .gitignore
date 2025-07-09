@@ -55,9 +55,6 @@ coverage.xml
 # Pyre type checker
 .pyre/
 
-# VS Code
-.vscode/
-
 # Local env files
 .env
 .env.*

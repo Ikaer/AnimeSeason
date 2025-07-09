@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python Debugger: main.py",
+            "name": "Python Debugger: test_mal_auth.py",
             "type": "debugpy",
             "request": "launch",
-            "program": "main.py",
+            "program": "test_mal_auth.py",
             "console": "integratedTerminal"
         },
         {
@@ -22,7 +22,8 @@
                 "FLASK_APP": "app.py",
                 "FLASK_ENV": "development"
             },
-            "args": []
+            "args": [],
+            "preLaunchTask": "Open Browser"
         }
     ]
 }

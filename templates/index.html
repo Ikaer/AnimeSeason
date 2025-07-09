@@ -49,10 +49,10 @@
         </tr>
         {% for anime in anime_list %}
         <tr>
-            <td>{{anime['node']['id']}}</td>
-            <td>{{anime['node']['title']}}</td>
-            <td>{{anime['node']['media_type']}}</td>
-            <td>{{anime['node']['start_date']}}</td>
+            <td>{{anime['id']}}</td>
+            <td>{{anime['title']}}</td>
+            <td>{{anime['media_type']}}</td>
+            <td>{{anime['start_date']}}</td>
         </tr>
         {% endfor %}
     </table>
