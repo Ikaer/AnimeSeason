@@ -4,5 +4,11 @@
       "provider_id": 1,
       "url": "https://www.netflix.com/fr/title/82024665"
     }
+  ],
+  "59986": [
+    {
+      "provider_id": 2,
+      "url": "https://www.crunchyroll.com/fr/series/GNVHKN94W/grand-blue-dreaming"
+    }
   ]
 }
