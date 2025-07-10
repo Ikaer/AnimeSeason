@@ -1,0 +1,6 @@
+[Paths]
+anime_db_path = <your_anime_db_absolute_path_here>
+
+[ApiKey]
+mal = <your_mal_api_key_here>
+redirect_uri = <something like http://localhost:12345/mal/callback>
