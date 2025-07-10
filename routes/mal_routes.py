@@ -11,6 +11,22 @@ import dataclasses
 
 mal_bp = Blueprint('mal_bp', __name__)
 
+
+# Helper to load the consolidated anime dict
+def load_consolidated_anime():
+    db_folder = current_app.config['DB_FOLDER']
+    consolidated_file = os.path.join(db_folder, "anime_seasons_mal.json")
+    if os.path.exists(consolidated_file):
+        with open(consolidated_file, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    return {}
+
+def save_consolidated_anime(anime_dict):
+    db_folder = current_app.config['DB_FOLDER']
+    consolidated_file = os.path.join(db_folder, "anime_seasons_mal.json")
+    with open(consolidated_file, 'w', encoding='utf-8') as f:
+        json.dump(anime_dict, f, ensure_ascii=False, indent=2)
+
 @mal_bp.route('/mal/fetch', methods=['POST'])
 def mal_fetch():
     config = current_app.config
@@ -39,7 +55,7 @@ def mal_fetch():
         return redirect(url_for('mal_bp.mal_login'))
     upsert_anime_season(anime_season)
     flash(f"Fetched and upserted anime list for {season} {year} into consolidated file.")
-    return redirect(url_for('index', year=year, season=season))
+    return redirect(url_for('main_bp.index', year=year, season=season))
 
 @mal_bp.route('/mal/login')
 def mal_login():
@@ -79,7 +95,7 @@ def mal_callback():
         json.dump(token, f)
     session['mal_token'] = token
     flash('MAL authentication successful.')
-    return redirect(url_for('index'))
+    return redirect(url_for('main_bp.index'))
 
 def is_mal_token_valid(token):
     import requests
@@ -94,7 +110,6 @@ def is_mal_token_valid(token):
         return False
 
 def upsert_anime_season(anime_season):
-    from app import load_consolidated_anime, save_consolidated_anime
     anime_dict = load_consolidated_anime()
     for anime_data in anime_season.data:
         node = anime_data.node
