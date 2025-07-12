@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  animeseason:
+    build: .
+    container_name: animeseason
+    ports:
+      - "12345:12345"
+    volumes:
+      - ./AnimeSeasonDb:/app/AnimeSeasonDb
+      - ./config.ini:/app/config.ini
+    restart: unless-stopped
