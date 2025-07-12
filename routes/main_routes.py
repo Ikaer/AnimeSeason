@@ -28,7 +28,12 @@ def index():
     selected_year = int(request.values.get('year', years[0]))
     selected_season = request.values.get('season') or get_current_season()
     anime_list = anime_db_storage.get_anime_list_from_consolidated(selected_year, selected_season)
+    # Sort anime list by property mean in descending order
+    if anime_list:
+        anime_list = sorted(anime_list, key=lambda x: x.mean if x.mean is not None else 0, reverse=True)
+
     has_file = bool(anime_list)
+
     return render_template(
         'index.html',
         years=years,
