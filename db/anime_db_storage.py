@@ -64,7 +64,7 @@ class AnimeDbStorage:
                 seen_ids.add(node.id)
                 ui_provider_urls = build_ui_provider_urls(str(node.id))
                 result.append(SeasonComputedAnime.from_node(node, ui_provider_urls))
-                
+
         return result
 
 
@@ -98,9 +98,13 @@ class AnimeDbStorage:
 
 
     def save_consolidated_anime(self, anime_dict: dict) -> None:
+        """
+        Save the consolidated anime dictionary to file, serializing Node objects using to_dict().
+        """
         consolidated_file = self.get_path("anime_seasons_mal.json")
+        serializable = {k: v.to_dict() for k, v in anime_dict.items()}
         with open(consolidated_file, 'w', encoding='utf-8') as f:
-            json.dump(anime_dict, f, ensure_ascii=False, indent=2)
+            json.dump(serializable, f, ensure_ascii=False, indent=2)
 
     def load_providers(self) -> List[AnimeProvider]:
         provider_file = self.get_path('provider.json')
