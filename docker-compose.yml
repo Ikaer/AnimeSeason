@@ -6,6 +6,6 @@ services:
     ports:
       - "12345:12345"
     volumes:
-      - ./AnimeSeasonDb:/app/AnimeSeasonDb
-      - ./config.ini:/app/config.ini
+      - /volume4/root4/AppData/AnimeSeason/database:/app/AnimeSeasonDb
+      - /volume4/root4/AppData/AnimeSeason/config.ini:/app/config.ini
     restart: unless-stopped
