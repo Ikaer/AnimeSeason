@@ -4,6 +4,7 @@ from typing import Any, Type, TypeVar, Callable, Dict, List
 from models.MAL.response.season.node import Node
 from models.MY.anime_provider import AnimeProvider
 from models.MY.season_anime_provider_url import SeasonAnimeProviderUrl
+from models.MY.season_computed_anime import SeasonComputedAnime
 from dataclasses import asdict
 
 class AnimeDbStorage:
@@ -22,33 +23,19 @@ class AnimeDbStorage:
             return {k: Node(**v) for k, v in raw_dict.items()}
         return {}
 
-    def get_anime_list_from_consolidated(self, year: int, season: str) -> List[Dict[str, Any]]:
-        """Get a list of anime for a given year and season, including provider info."""
-        
+    def get_anime_list_from_consolidated(self, year: int, season: str) -> List[SeasonComputedAnime]:
+        """Get a list of SeasonComputedAnime for a given year and season, including provider info."""
         anime_dict = self.load_consolidated_anime()
-        providers_path = self.get_path('provider.json')
-        anime_providers_path = self.get_path('anime_providers.json')
-        with open(providers_path, 'r', encoding='utf-8') as f:
-            providers: Dict[str, Any] = {str(p['id']): p for p in json.load(f)}
-        if os.path.exists(anime_providers_path):
-            with open(anime_providers_path, 'r', encoding='utf-8') as f:
-                anime_providers: Dict[str, Any] = json.load(f)
-        else:
-            anime_providers = {}
-        result: List[Dict[str, Any]] = []
-        for anime in anime_dict.values():
-            start_season: Dict[str, Any] = anime.get('start_season', {})
-            if start_season.get('year') == year and start_season.get('season') == season:
-                anime_id: str = str(anime['id'])
-                provider_entries: List[Dict[str, Any]] = []
-                for entry in anime_providers.get(anime_id, []):
-                    provider = providers.get(str(entry['provider_id']))
-                    if provider:
-                        provider_entry = provider.copy()
-                        provider_entry['url'] = entry['url']
-                        provider_entries.append(provider_entry)
-                anime['providers'] = provider_entries
-                result.append(anime)
+        anime_providers = self.load_anime_providers()
+
+        result: List[SeasonComputedAnime] = []
+
+        for node in anime_dict.values():
+            if node.start_season and node.start_season.year == year and node.start_season.season == season:
+                anime_id = str(node.id)
+                provider_urls = anime_providers.get(anime_id, [])
+                result.append(SeasonComputedAnime.from_node(node, provider_urls))
+
         return result
 
     def get_years(self) -> List[int]:

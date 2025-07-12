@@ -24,11 +24,11 @@ def get_current_season() -> str:
 def index():
     """Render the main page with anime list for the selected year and season."""
     anime_db_storage = get_anime_db_storage()
-    years: List[int] = anime_db_storage.get_years()
-    selected_year: int = int(request.values.get('year', years[0]))
-    selected_season: str = request.values.get('season') or get_current_season()
-    anime_list: List[Dict[str, Any]] = anime_db_storage.get_anime_list_from_consolidated(selected_year, selected_season)
-    has_file: bool = bool(anime_list)
+    years = anime_db_storage.get_years()
+    selected_year = int(request.values.get('year', years[0]))
+    selected_season = request.values.get('season') or get_current_season()
+    anime_list = anime_db_storage.get_anime_list_from_consolidated(selected_year, selected_season)
+    has_file = bool(anime_list)
     return render_template(
         'index.html',
         years=years,
