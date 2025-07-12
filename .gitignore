@@ -68,3 +68,5 @@ Thumbs.db
 # my files
 mal_token.json
 config.ini
+AnimeSeasonDb/anime_providers.json
+AnimeSeasonDb/anime_seasons_mal.json
