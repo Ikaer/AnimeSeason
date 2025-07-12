@@ -1,35 +1,15 @@
 from flask import Blueprint, request, redirect, url_for, flash, session, current_app, render_template
+from db.anime_db_storage import get_anime_db_storage
 from mal.mal_api import fetch_seasonal_anime, MalUnauthorizedException
 import json
 import os
 import base64
 import secrets
 from requests_oauthlib import OAuth2Session
-import dataclasses
 from models.MAL.response.season.anime_season_response import AnimeSeasonResponse
 from models.MAL.response.season.node import Node
 
 mal_bp = Blueprint('mal_bp', __name__)
-
-
-# Helper to load the consolidated anime dict as Node dataclasses
-def load_consolidated_anime() -> dict[str, Node]:
-    db_folder = current_app.config['DB_FOLDER']
-    consolidated_file = os.path.join(db_folder, "anime_seasons_mal.json")
-    if os.path.exists(consolidated_file):
-        with open(consolidated_file, 'r', encoding='utf-8') as f:
-            raw = json.load(f)
-        # You may want a more robust deserializer for nested fields
-        return {anime_id: Node(**anime_dict) for anime_id, anime_dict in raw.items() if anime_dict}
-    return {}
-
-def save_consolidated_anime(anime_dict: dict[str, Node]) -> None:
-    db_folder = current_app.config['DB_FOLDER']
-    consolidated_file = os.path.join(db_folder, "anime_seasons_mal.json")
-    serializable = {anime_id: dataclasses.asdict(node) for anime_id, node in anime_dict.items()}
-    with open(consolidated_file, 'w', encoding='utf-8') as f:
-        json.dump(serializable, f, ensure_ascii=False, indent=2)
-
 
 def is_mal_token_valid(token):
     import requests
@@ -47,17 +27,16 @@ def upsert_anime_season(anime_season: AnimeSeasonResponse) -> None:
     """
     Upsert anime season data into the consolidated anime dictionary.
     """
-    anime_dict = load_consolidated_anime()
+    anime_db_storage = get_anime_db_storage()
+    anime_dict = anime_db_storage.load_consolidated_anime()
     for anime_data in anime_season.data:
         node = anime_data.node
         anime_dict[str(node.id)] = node
-    save_consolidated_anime(anime_dict)
+    anime_db_storage.save_consolidated_anime(anime_dict)
 
 
 @mal_bp.route('/mal/fetch', methods=['POST'])
 def mal_fetch():
-    config = current_app.config
-    DB_FOLDER = config['DB_FOLDER']
     year = int(request.form['year'])
     season = request.form['season']
     token = session.get('mal_token')

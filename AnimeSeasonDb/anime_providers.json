@@ -2,19 +2,37 @@
   "59845": [
     {
       "provider_id": 1,
-      "url": "https://www.netflix.com/fr/title/82024665"
+      "anime_id": 59845,
+      "url": "https://www.netflix.com/fr/title/82024665",
+      "season": "",
+      "year": 0
     }
   ],
   "59986": [
     {
       "provider_id": 2,
-      "url": "https://www.crunchyroll.com/fr/series/GNVHKN94W/grand-blue-dreaming"
+      "anime_id": 59986,
+      "url": "https://www.crunchyroll.com/fr/series/GNVHKN94W/grand-blue-dreaming",
+      "season": "",
+      "year": 0
     }
   ],
   "59205": [
     {
       "provider_id": 2,
-      "url": "https://www.crunchyroll.com/fr/series/G8DHV78ZM/clevatess"
+      "anime_id": 59205,
+      "url": "https://www.crunchyroll.com/fr/series/G8DHV78ZM/clevatess",
+      "season": "",
+      "year": 0
+    }
+  ],
+  "58749": [
+    {
+      "provider_id": 2,
+      "anime_id": 58749,
+      "url": "https://www.crunchyroll.com/fr/series/GG5H5X3VN/arknights",
+      "season": "",
+      "year": 0
     }
   ]
 }
