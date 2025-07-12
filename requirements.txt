@@ -1,3 +1,4 @@
 # Requirements for AnimeSeason project
 requests
 requests-oauthlib
+dataclasses-json

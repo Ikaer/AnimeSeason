@@ -1,9 +1,9 @@
 import os
 import json
-from typing import Any, Type, TypeVar, Callable, Dict, List
+from typing import Dict, List
 from models.MAL.response.season.node import Node
 from models.MY.anime_provider import AnimeProvider
-from models.MY.season_anime_provider_url import SeasonAnimeProviderUrl
+from models.MY.season_anime_provider_url import SeasonAnimeProviderUrl, SeasonAnimeProviderUrlUI
 from models.MY.season_computed_anime import SeasonComputedAnime
 from dataclasses import asdict
 
@@ -20,13 +20,15 @@ class AnimeDbStorage:
         if os.path.exists(consolidated_file):
             with open(consolidated_file, 'r', encoding='utf-8') as f:
                 raw_dict = json.load(f)
-            return {k: Node(**v) for k, v in raw_dict.items()}
+            # Use Node.from_dict for proper nested deserialization
+            return {k: Node.from_dict(v) for k, v in raw_dict.items()}
         return {}
 
     def get_anime_list_from_consolidated(self, year: int, season: str) -> List[SeasonComputedAnime]:
         """Get a list of SeasonComputedAnime for a given year and season, including provider info."""
         anime_dict = self.load_consolidated_anime()
         anime_providers = self.load_anime_providers()
+        providers = self.load_providers()
 
         result: List[SeasonComputedAnime] = []
 
@@ -34,7 +36,14 @@ class AnimeDbStorage:
             if node.start_season and node.start_season.year == year and node.start_season.season == season:
                 anime_id = str(node.id)
                 provider_urls = anime_providers.get(anime_id, [])
-                result.append(SeasonComputedAnime.from_node(node, provider_urls))
+                ui_provider_urls: List[SeasonAnimeProviderUrlUI] = []
+                for provider_url in provider_urls:
+                    provider = next((p for p in providers if p.id == provider_url.provider_id), None)
+                    if provider:
+                        ui_provider_urls.append(SeasonAnimeProviderUrlUI(provider=provider, url=provider_url.url))
+
+
+                result.append(SeasonComputedAnime.from_node(node, ui_provider_urls))
 
         return result
 

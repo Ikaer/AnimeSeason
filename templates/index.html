@@ -62,32 +62,32 @@
         </tr>
         {% for anime in anime_list %}
         <tr>
-            <td>{{anime['id']}}</td>
-            <td>{{anime['title']}}</td>
-            <td>{{anime['media_type']}}</td>
-            <td>{{anime['start_date']}}</td>
-            <td>{{anime['mean'] if 'mean' in anime and anime['mean'] is not none else ''}}</td>
-            <td>{{anime['start_season']['year'] if 'start_season' in anime and anime['start_season'] and 'year' in anime['start_season'] else ''}}</td>
-            <td>{{anime['start_season']['season'] if 'start_season' in anime and anime['start_season'] and 'season' in anime['start_season'] else ''}}</td>
-            <td>{% if 'main_picture' in anime and anime['main_picture'] and 'medium' in anime['main_picture'] %}
-                <img src="{{anime['main_picture']['medium']}}" alt="pic" style="height:100px;">
+            <td>{{ anime.id }}</td>
+            <td>{{ anime.title }}</td>
+            <td>{{ anime.media_type }}</td>
+            <td>{{ anime.start_date }}</td>
+            <td>{{ anime.mean if anime.mean is not none else '' }}</td>
+            <td>{{ anime.start_season.year if anime.start_season and anime.start_season.year is not none else '' }}</td>
+            <td>{{ anime.start_season.season if anime.start_season and anime.start_season.season is not none else '' }}</td>
+            <td>{% if anime.main_picture and anime.main_picture.medium %}
+                <img src="{{ anime.main_picture.medium }}" alt="pic" style="height:100px;">
                 {% endif %}
             </td>
-            <td>{{anime['status'] if 'status' in anime else ''}}</td>
-            <td>{{anime['my_list_status']['status'] if 'my_list_status' in anime and anime['my_list_status'] else ''}}</td>
-            <td>{{anime['my_list_status']['score'] if 'my_list_status' in anime and anime['my_list_status'] else ''}}</td>
-            <td>{{anime['my_list_status']['num_episodes_watched'] if 'my_list_status' in anime and anime['my_list_status'] and 'num_episodes_watched' in anime['my_list_status'] else ''}}</td>
+            <td>{{ anime.status if anime.status is not none else '' }}</td>
+            <td>{{ anime.my_list_status.status if anime.my_list_status and anime.my_list_status.status is not none else '' }}</td>
+            <td>{{ anime.my_list_status.score if anime.my_list_status and anime.my_list_status.score is not none else '' }}</td>
+            <td>{{ anime.my_list_status.num_episodes_watched if anime.my_list_status and anime.my_list_status.num_episodes_watched is not none else '' }}</td>
             <td>
-                {% for provider in anime.providers %}
-                    <a href="{{provider.url}}" target="_blank" title="{{provider.name}}">
-                        <img src="{{ url_for('static', filename='providers/' + provider.logo) }}" alt="{{provider.name}}" style="height:32px; margin-right:4px; vertical-align:middle;">
+                {% for anime_provider in anime.providers %}
+                    <a href="{{ anime_provider.url }}" target="_blank" title="{{ anime_provider.provider.name }}">
+                        <img src="{{ url_for('static', filename='providers/' + anime_provider.provider.logo) }}" alt="{{ anime_provider.provider.name }}" style="height:32px; margin-right:4px; vertical-align:middle;">
                     </a>
                 {% endfor %}
             </td>
             <td>
                 <button type="button" onclick="this.nextElementSibling.style.display='block'">Add Provider</button>
                 <form method="post" action="/add_provider_url" style="display:none; margin-top:4px;">
-                    <input type="hidden" name="anime_id" value="{{anime['id']}}">
+                    <input type="hidden" name="anime_id" value="{{ anime.id }}">
                     <input type="url" name="provider_url" placeholder="Provider URL" required style="width:160px;">
                     <button type="submit">Save</button>
                     <button type="button" onclick="this.parentElement.style.display='none'">Cancel</button>

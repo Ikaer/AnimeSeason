@@ -5,6 +5,7 @@ import secrets
 
 from flask import Flask
 from db.anime_db_storage import init_anime_db_storage
+from mal.mal_auth import init_mal_auth
 from routes.providers_routes import provider_bp
 from routes.mal_routes import mal_bp
 from routes.main_routes import main_bp
@@ -23,7 +24,12 @@ def create_app() -> Flask:
     os.makedirs(db_folder, exist_ok=True)
 
     init_anime_db_storage(db_folder)
-
+    init_mal_auth(
+        config['ApiKey']['mal'],
+        config['ApiKey'].get('redirect_uri', None),
+        'https://myanimelist.net/v1/oauth2/authorize',
+        'https://myanimelist.net/v1/oauth2/token'
+    )
     app = Flask(__name__)
     app.secret_key = secrets.token_hex(32)
 

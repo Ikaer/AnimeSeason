@@ -1,5 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
+
+from dataclasses_json import dataclass_json
 from .main_picture import MainPicture
 from .alternative_titles import AlternativeTitles
 from .genre import Genre
@@ -10,6 +12,7 @@ from .picture import Picture
 from .related_anime import RelatedAnime
 from .studio import Studio
 
+@dataclass_json
 @dataclass
 class Node:
     id: int

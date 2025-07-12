@@ -17,16 +17,20 @@ def get_provider_id_from_url(url: str, providers: List[AnimeProvider]) -> Option
 @provider_bp.route('/add_provider_url', methods=['POST'])
 def add_provider_url() -> None:
     anime_db_storage = get_anime_db_storage()
+    
     anime_id = str(request.form['anime_id'])
     provider_url = request.form['provider_url']
+
     providers = anime_db_storage.load_providers()
     provider_id = get_provider_id_from_url(provider_url, providers)
     if provider_id is None:
         flash('Provider not recognized from URL.')
         return redirect(url_for('main_bp.index'))
+    
     anime_providers = anime_db_storage.load_anime_providers()
     if anime_id not in anime_providers:
         anime_providers[anime_id] = []
+        
     # Prevent duplicate URLs for the same provider
     for entry in anime_providers[anime_id]:
         if entry.provider_id == provider_id:

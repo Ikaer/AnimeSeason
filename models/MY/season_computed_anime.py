@@ -1,13 +1,16 @@
 from dataclasses import dataclass, field
 from typing import Optional, List
+
+from dataclasses_json import dataclass_json
 from models.MAL.response.season.node import Node
 from models.MAL.response.season.main_picture import MainPicture
 from models.MAL.response.season.genre import Genre
 from models.MAL.response.season.my_list_status import MyListStatus
 from models.MAL.response.season.start_season import StartSeason
 from models.MAL.response.season.studio import Studio
-from models.MY.season_anime_provider_url import SeasonAnimeProviderUrl
+from models.MY.season_anime_provider_url import SeasonAnimeProviderUrl, SeasonAnimeProviderUrlUI
 
+@dataclass_json
 @dataclass
 class SeasonComputedAnime:
     id: int
@@ -33,10 +36,10 @@ class SeasonComputedAnime:
     studios: List[Studio] = field(default_factory=list)
     english_title: Optional[str] = None
 
-    providers: List[SeasonAnimeProviderUrl] = None
+    providers: List[SeasonAnimeProviderUrlUI] = None
 
     @classmethod
-    def from_node(cls, node: Node, providers: Optional[List[SeasonAnimeProviderUrl]] = None) -> 'SeasonComputedAnime':
+    def from_node(cls, node: Node, providers: Optional[List[SeasonAnimeProviderUrlUI]] = None) -> 'SeasonComputedAnime':
         
         english_title = None
 
