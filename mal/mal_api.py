@@ -6,7 +6,10 @@ import dataclasses
 class MalUnauthorizedException(Exception):
     pass
 
-def parse_anime_season_response(data):
+def parse_anime_season_response(data: dict) -> AnimeSeasonResponse:
+    """
+    Parse the anime season response dict into an AnimeSeasonResponse dataclass.
+    """
     # Helper to recursively convert dicts to dataclasses
     def from_dict(cls, d):
         if isinstance(d, list):
@@ -19,9 +22,9 @@ def parse_anime_season_response(data):
         return cls(**{k: from_dict(fieldtypes[k], v) for k, v in d.items() if k in fieldtypes})
     return from_dict(AnimeSeasonResponse, data)
 
-def fetch_seasonal_anime(token, year, season, limit=100, offset=0, sort=None, fields=None, nsfw=None):
+def fetch_seasonal_anime(token, year: int, season: str, limit: int = 100, offset: int = 0, sort: str = None, fields: str = None, nsfw: bool = None) -> AnimeSeasonResponse:
     """
-    Fetch seasonal anime from MAL API using OAuth2 token and return as dataclasses.
+    Fetch seasonal anime from MAL API using OAuth2 token and return as AnimeSeasonResponse dataclass.
     """
     url = f"https://api.myanimelist.net/v2/anime/season/{year}/{season}"
     params = {"limit": limit, "offset": offset}
