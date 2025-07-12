@@ -31,7 +31,7 @@ class MALAuth:
             code_verifier += "A"
         return code_verifier
 
-    def authorize(self, code_verifier: str) -> tuple[str, str, str]:
+    def authorize(self) -> tuple[str, str, str]:
         code_verifier = self.generate_code_verifier()
         oauth = OAuth2Session(self.client_id, redirect_uri=self.redirect_uri)
         auth_url, state = oauth.authorization_url(

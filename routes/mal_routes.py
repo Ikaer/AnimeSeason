@@ -53,7 +53,7 @@ def mal_fetch():
 @mal_bp.route('/mal/login')
 def mal_login():
     mal_auth = get_mal_auth()
-    auth_url, state, code_verifier = mal_auth.authorize(code_verifier)
+    auth_url, state, code_verifier = mal_auth.authorize()
     session['mal_code_verifier'] = code_verifier
     session['mal_oauth_state'] = state
     return redirect(auth_url)
