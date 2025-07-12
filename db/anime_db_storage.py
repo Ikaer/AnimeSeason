@@ -25,27 +25,60 @@ class AnimeDbStorage:
         return {}
 
     def get_anime_list_from_consolidated(self, year: int, season: str) -> List[SeasonComputedAnime]:
-        """Get a list of SeasonComputedAnime for a given year and season, including provider info."""
+        """
+        Get a list of SeasonComputedAnime for a given year and season, including provider info.
+        Also includes anime from the previous season that are still airing.
+        """
         anime_dict = self.load_consolidated_anime()
         anime_providers = self.load_anime_providers()
         providers = self.load_providers()
 
+        def build_ui_provider_urls(anime_id: str) -> List[SeasonAnimeProviderUrlUI]:
+            provider_urls = anime_providers.get(anime_id, [])
+            ui_provider_urls: List[SeasonAnimeProviderUrlUI] = []
+            for provider_url in provider_urls:
+                provider = next((p for p in providers if p.id == provider_url.provider_id), None)
+                if provider:
+                    ui_provider_urls.append(SeasonAnimeProviderUrlUI(provider=provider, url=provider_url.url))
+            return ui_provider_urls
+
         result: List[SeasonComputedAnime] = []
 
-        for node in anime_dict.values():
-            if node.start_season and node.start_season.year == year and node.start_season.season == season:
-                anime_id = str(node.id)
-                provider_urls = anime_providers.get(anime_id, [])
-                ui_provider_urls: List[SeasonAnimeProviderUrlUI] = []
-                for provider_url in provider_urls:
-                    provider = next((p for p in providers if p.id == provider_url.provider_id), None)
-                    if provider:
-                        ui_provider_urls.append(SeasonAnimeProviderUrlUI(provider=provider, url=provider_url.url))
+        filtered_anime: List[Node] = []
+        prev_year, prev_season = self.get_previous_season(year, season)
+        # we want animer from the current season (whatever status they have) and also from the previous season that are still airing
+        for anime in anime_dict.values():
+            if anime.start_season and anime.start_season.year and anime.start_season.season:
+                anime_year = anime.start_season.year
+                anime_season = anime.start_season.season
+                anime_status = anime.status               
+                if (anime_year == year and anime_season == season) or (
+                    anime_year == prev_year and anime_season == prev_season and anime_status == "currently_airing"
+                ):
+                    filtered_anime.append(anime)
 
-
+        # Now convert filtered nodes to SeasonComputedAnime while avoiding duplicates
+        seen_ids = set()
+        for node in filtered_anime:
+            if node.id not in seen_ids:
+                seen_ids.add(node.id)
+                ui_provider_urls = build_ui_provider_urls(str(node.id))
                 result.append(SeasonComputedAnime.from_node(node, ui_provider_urls))
-
+                
         return result
+
+
+    @staticmethod
+    def get_previous_season(year: int, season: str) -> tuple[int, str]:
+        """Return the previous season and year using standard anime convention."""
+        seasons = ["winter", "spring", "summer", "fall"]
+        season = season.lower()
+        if season not in seasons:
+            raise ValueError(f"Unknown season: {season}")
+        idx = seasons.index(season)
+        if idx == 0:
+            return year - 1, seasons[-1]
+        return year, seasons[idx - 1]
 
     def get_years(self) -> List[int]:
         """Extract available years from anime JSON files in the DB folder."""
