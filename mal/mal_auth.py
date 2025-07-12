@@ -13,7 +13,7 @@ class MALAuth:
         self.auth_url = auth_url
         self.token_url = token_url
 
-    def is_mal_token_valid(token: Optional[dict[str, Any]] = None) -> bool:
+    def is_mal_token_valid(self, token: Optional[dict[str, Any]] = None) -> bool:
         import requests
         try:
             headers = {"Authorization": f"Bearer {token['access_token'] if isinstance(token, dict) else token}"}
